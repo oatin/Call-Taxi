@@ -7,7 +7,7 @@ This is a project that will be used for submitting assignment 1145005-63 Web Dev
 
 **TODO:**
 
-- [ x ] Project Planning
+- [x] Project Planning
 - [ ] Website design
 - [ ] Backend degin 
 - [ ] Setup & Configuration
@@ -22,11 +22,14 @@ This is a project that will be used for submitting assignment 1145005-63 Web Dev
 This is a project developed in our free time to submit the teacher's work. Updates may be delayed.
 
 
-## Clone Project
+## Setup Project
 To install Project, run the following command
 
 ```bash
   git clone https://github.com/oatin/Call-Taxi.git
+```
+```bash
+  pip install -r requirements
 ```
 
 
