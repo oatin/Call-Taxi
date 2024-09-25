@@ -3,6 +3,24 @@
 
 This is a project that will be used for submitting assignment 1145005-63 Web Development.
 
+## Future Updates & Roadmap
+
+**TODO:**
+
+- [ x ] Project Planning
+- [ ] Website design
+- [ ] Backend degin 
+- [ ] Setup & Configuration
+- [ ] Database Design
+- [ ] Frontend Development
+- [ ] Backend Development
+- [ ] Integration
+- [ ] Testing
+- [ ] Deployment & Hosting
+- [ ] Optimization & Maintenance
+
+This is a project developed in our free time to submit the teacher's work. Updates may be delayed.
+
 
 ## Clone Project
 To install Project, run the following command
