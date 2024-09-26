@@ -1,7 +1,6 @@
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 
 # Create your views here.
 def catch_all_view(request, url):
@@ -11,6 +10,14 @@ def catch_all_view(request, url):
         return redirect('/')
     
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('/home')  # ถ้าผู้ใช้ล็อกอินแล้ว redirect ไปที่ /home
-    return TemplateView.as_view(template_name='login_page/login.html')(request)
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # หรือหน้าที่คุณต้องการให้ redirect หลัง login
+        else:
+            # ส่งข้อความผิดพลาดกลับไปยัง template
+            return render(request, 'login_page/login.html', {'error': 'Invalid credentials'})
+    return render(request, 'login_page/login.html')

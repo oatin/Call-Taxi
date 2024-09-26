@@ -48,8 +48,8 @@ To run project, run the following command
 Call-Taxi/
 │
 ├── call_taxi/           # Core booking functionality (ride requests, ride status)
-  ├── static/              # Static files (CSS, JS)
-  ├── templates/           # HTML templates for the app
+├── static/              # Static files (CSS, JS)
+├── templates/           # HTML templates for the app
 ├── chat/                # Real-time chat functionality between users and drivers
 ├── login/               # User authentication and Google OAuth login
 ├── manage.py            # Django management script
