@@ -11,8 +11,8 @@ class UserProfile(models.Model):
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
-        ('passenger', 'Passenger'),
-        ('driver', 'Taxi Driver'),
+        ('passenger', 'ผู้ใช้บริการ'),
+        ('driver', 'คนขับ Taxi'),
     ]
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_driver = models.BooleanField(default=False)
