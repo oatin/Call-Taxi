@@ -1,13 +1,73 @@
-{% load socialaccount %} 
+{% load socialaccount %}
+{% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Call Taxi : Home</title>
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
 </head>
-<body>
-    <h1 style="text-align: center;"> My Home </h1>
+<body class="flex flex-col h-screen">
+    <div class="bg-[#333333] h-[20%] flex items-center justify-center rounded-b-lg">
+        <h1 class="text-white text-2xl">Call Taxi - Top Menu</h1>
+    </div>
+    
+    <div id="map" class="flex-1"></div>
+
+    <div class="bg-[#FFB900] h-[20%] flex items-center justify-center rounded-t-lg">
+        <h1 class="text-black text-2xl">Call Taxi - Bottom Menu</h1>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+    <script>
+        var map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+        var marker;
+
+        function setViewToCurrentLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lon = position.coords.longitude;
+
+                    map.setView([lat, lon], 15);
+
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+
+                    marker = L.marker([lat, lon]).addTo(map)
+                        .bindPopup('Your current location')
+                        .openPopup();
+
+                    document.querySelector('input[placeholder="หา้เมหวทกาลยูธรณาธนี"]').value = 
+                        `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+                }, function(error) {
+                    console.error("Error getting location:", error.message);
+                    alert("Unable to retrieve your location. Please enter it manually.");
+                });
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                alert("Geolocation is not supported by your browser. Please enter your location manually.");
+            }
+        }
+
+        // Call the function when the page loads
+        setViewToCurrentLocation();
+    </script>
+</body>
+
+</html>
+
+<!-- <h1 style="text-align: center;"> My Home </h1>
     {% if user.is_authenticated %}
     <p>Welcome. You are logged in as {{user.username}} </p>
     {% endif %}
@@ -15,6 +75,4 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Logout</button>
-    </form>
-</body>
-</html>
+    </form> -->

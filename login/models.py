@@ -1,3 +1,38 @@
 from django.db import models
+from django.contrib.auth.models import User as AuthUser
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
-# Create your models here.
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+class CustomUser(AbstractUser):
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    is_driver = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        permissions = [
+            ("can_view", "Can view user"),
+        ]
+
+    
+class TaxiDriver(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    license_number = models.CharField(max_length=50, unique=True)
+    car_model = models.CharField(max_length=100)
+    car_plate = models.CharField(max_length=20, unique=True)
+    status = models.CharField(max_length=20, choices=[
+        ('available', 'Available'),
+        ('busy', 'Busy'),
+        ('offline', 'Offline'),
+    ])
+
+    def __str__(self):
+        return f"TaxiDriver({self.user.username}, License: {self.license_number})"
