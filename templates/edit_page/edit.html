@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Taxi - Edit Information</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white flex items-center justify-center h-screen">
+
+    <!-- Container -->
+    <div class="w-full max-w-md">
+
+        <!-- Taxi Icon and Title -->
+        <div class="bg-white p-6 flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-20 h-20 text-black">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.36 6H5.64C4.75 6 4 6.64 4 7.55v7.9c0 .91.75 1.55 1.64 1.55H6v1.18c0 .65.64 1.18 1.36 1.18h9.28c.72 0 1.36-.53 1.36-1.18v-1.18h.36c.89 0 1.64-.64 1.64-1.55v-7.9c0-.91-.75-1.55-1.64-1.55zM6 14h12m-8 3h4" />
+            </svg>
+            <h1 class="text-3xl font-bold mt-4">CALL TAXI</h1>
+        </div>
+
+        <!-- Form Section -->
+        <div class="bg-yellow-500 p-20 rounded-lg shadow-md">
+            <h2 class="text-lg font-bold mb-4">แก้ไขข้อมูล</h2>
+            
+            <!-- Profile Picture -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-14 h-14 bg-black rounded-full"></div>
+                    <span class="ml-2 text-sm">แก้ไขรูปภาพ</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-gray-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5l7 7-7 7m0-14v14" />
+                </svg>
+            </div>
+
+            <!-- Form Fields -->
+            <form action="#" method="POST">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2" for="username">ชื่อผู้ใช้งาน</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" type="text" id="username" name="username">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2" for="password">รหัสผ่าน</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" type="password" id="password" name="password">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2" for="email">อีเมล</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" type="email" id="email" name="email">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2" for="phone">เบอร์โทร</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" type="text" id="phone" name="phone">
+                </div>
+
+                <!-- Submit Button -->
+                <button class="w-full bg-black text-white p-2 rounded">ยืนยัน</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
