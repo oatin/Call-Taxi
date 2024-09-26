@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Taxi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-800 min-h-screen flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between bg-gray-900 p-4">
+        <button class="text-yellow-500 text-2xl">
+            ☰
+        </button>
+        <h1 class="text-white text-3xl font-bold">CALL TAXI</h1>
+        <div></div> <!-- Empty space for alignment -->
+    </div>
+    <!-- Map -->
+    <div class="flex-1 relative">
+        <div class="absolute inset-0 bg-gray-800">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Call Taxi with Maps</title>
+                <script src="https://cdn.tailwindcss.com"></script>
+                <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+                <style>
+                    /* กำหนดขนาดของแผนที่ */
+                    #map {
+                        height: 100%;  /* ให้แผนที่เต็มพื้นที่ */
+                        width: 100%;   /* ให้แผนที่เต็มความกว้าง */
+                    }
+                </style>
+            </head>
+            <body class="bg-gray-800 min-h-screen flex flex-col">
+                <!-- Search Form -->
+                <div class="bg-gray-700 p-4 rounded-lg m-4">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <input type="text" class="w-full p-2 rounded-lg bg-gray-600 text-white" placeholder="ค้นหาวิทยาลัยจุฬาลงกรณ์">
+                        <button class="bg-yellow-500 text-black px-4 py-2 rounded-lg">+</button>
+                    </div>
+                    <button class="flex items-center space-x-2 text-white">
+                        <span>เป็นที่ตั้งปัจจุบัน</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 1.657-1.343 3-3 3-1.657 0-3-1.343-3-3 0-1.657 1.343-3 3-3 1.657 0 3 1.343 3 3zM12 12v1.5c0 .278.222.5.5.5H14M15.5 16v-1.5c0-.278-.222-.5-.5-.5H14M9 12h.01"/>
+                        </svg>
+                    </button>
+                </div>
+            
+                <!-- Map -->
+                <div id="map" class="flex-1 relative"></div> <!-- แผนที่จะแสดงใน div นี้ -->
+            
+                <!-- Accept/Reject Buttons -->
+                <div class="bg-yellow-500 p-4 flex justify-around">
+                    <button class="bg-green-500 text-white font-bold py-2 px-6 rounded-full text-lg">
+                        รับงาน
+                    </button>
+                    <button class="bg-red-500 text-white font-bold py-2 px-6 rounded-full text-lg">
+                        ไม่รับงาน
+                    </button>
+                </div>
+            
+                <!-- Script สำหรับเริ่มต้นแผนที่ -->
+                <script>
+                    function initMap() {
+                        // กำหนดตำแหน่งของแผนที่ (latitude, longitude)
+                        const location = { lat: 13.7563, lng: 100.5018 };  // พิกัดของกรุงเทพฯ
+            
+                        // สร้างแผนที่
+                        const map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 12,
+                            center: location
+                        });
+            
+                        // ใส่ Marker ลงในแผนที่
+                        const marker = new google.maps.Marker({
+                            position: location,
+                            map: map
+                        });
+                    }
+                </script>
+            </body>
+            </html>
+        </div>
+    </div>
+    </div>
+</body>
+</html>
