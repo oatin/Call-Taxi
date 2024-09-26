@@ -11,38 +11,38 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
 
-    <div class="bg-white shadow-md rounded-lg p-6 w-96">
-        <h2 class="text-2xl font-semibold text-center mb-4">Create Account</h2>
+    <div class="bg-yellow-500 shadow-md rounded-lg p-6 w-96">
+        <h2 class="text-2xl font-semibold text-center mb-4">กรุณาเลือกประเภทของคุณ</h2>
         <form method="POST" id="signup-form">
             {% csrf_token %}
             <div class="mb-4">
-                <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                <label for="ประเภทผู้ใช้งาน" class="block text-sm font-medium text-gray-700">ประเภทผู้ใช้งาน</label>
                 {{ form.role }}
             </div>
             <div class="mb-4">
-                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <label for="ชื่อผู้ใช้" class="block text-sm font-medium text-gray-700">ชื่อผู้ใช้</label>
                 {{ form.username }}
             </div>
             <div class="mb-4">
-                <label for="password1" class="block text-sm font-medium text-gray-700">Password</label>
+                <label for="รหัสผ่าน" class="block text-sm font-medium text-gray-700">รหัสผ่าน</label>
                 {{ form.password1 }}
             </div>
             <div class="mb-4">
-                <label for="password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <label for="ยืนยันรหัสผ่าน" class="block text-sm font-medium text-gray-700">ยืนยันรหัสผ่าน</label>
                 {{ form.password2 }}
             </div>
             <div class="mb-4">
-                <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                <label for="เบอร์โทรศัพท์" class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
                 {{ form.phone_number }}
             </div>
             
             <div id="driver-fields" style="display: none;">
                 <div class="mb-4">
-                    <label for="license_number" class="block text-sm font-medium text-gray-700">License Number</label>
+                    <label for="license_number" class="block text-sm font-medium text-gray-700">หมายเลขใบอนุญาต</label>
                     {{ form.license_number }}
                 </div>
                 <div class="mb-4">
-                    <label for="car_model" class="block text-sm font-medium text-gray-700">Car Model</label>
+                    <label for="car_model" class="block text-sm font-medium text-gray-700">ประเภทรถ</label>
                     {{ form.car_model }}
                 </div>
                 <div class="mb-4">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded">Sign Up</button>
+            <button type="submit" class="w-full bg-black 300 hover:bg-blue-700 text-white font-bold py-2 rounded">สมัคร</button>
         </form>
     </div>
 
