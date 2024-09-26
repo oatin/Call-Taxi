@@ -8,12 +8,12 @@ This is a project that will be used for submitting assignment 1145005-63 Web Dev
 **TODO:**
 
 - [x] Project Planning
-- [ ] Website design
-- [ ] Backend degin 
-- [ ] Setup & Configuration
-- [ ] Database Design
-- [ ] Frontend Development
-- [ ] Backend Development
+- [x] Website design
+- [x] Backend degin 
+- [x] Setup & Configuration
+- [x] Database Design
+- [x] Frontend Development
+- [x] Backend Development
 - [ ] Integration
 - [ ] Testing
 - [ ] Deployment & Hosting

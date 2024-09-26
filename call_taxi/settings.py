@@ -63,7 +63,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     'django_browser_reload.middleware.BrowserReloadMiddleware',# New
-     # Add the account middleware:
     "allauth.account.middleware.AccountMiddleware", # New
 
 ]

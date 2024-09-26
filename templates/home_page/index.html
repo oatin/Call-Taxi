@@ -8,13 +8,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Call Taxi : Home</title>
     {% tailwind_css %}
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
 </head>
 <body class="flex flex-col h-screen">
-    <div class="bg-[#333333] h-[20%] flex items-center justify-center rounded-b-lg">
-        <h1 class="text-white text-2xl">Call Taxi - Top Menu</h1>
+    <div class="bg-[#333333] h-[20%] flex items-center p-4 rounded-b-lg">
+        <!-- Hamburger Menu -->
+        <div class="group flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white p-2 hover:bg-slate-200" id="menu-btn">
+            <div class="space-y-2">
+                <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:translate-y-1.5 group-hover:rotate-45"></span>
+                <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:-translate-y-1.5 group-hover:-rotate-45"></span>
+            </div>
+        </div>
+        
+        <!-- Move this closer -->
+        <h1 class="text-white text-2xl ml-4">Call Taxi</h1>
+    </div>
+
+    <!-- Modal -->
+    <div id="menu-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1000]">
+        <div class="bg-white p-8 rounded-lg w-96">
+            <h2 class="text-2xl font-semibold mb-4">Menu</h2>
+            <ul class="space-y-2">
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Home</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Chat</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Account</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Contact</a></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="POST" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="block text-lg text-gray-700 hover:text-orange-500">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+            <button id="close-modal" class="mt-6 block w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">Close</button>
+        </div>
     </div>
     
     <div id="map" class="flex-1"></div>
@@ -27,6 +59,24 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
     <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const menuModal = document.getElementById('menu-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        menuBtn.addEventListener('click', function() {
+            menuModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', function() {
+            menuModal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === menuModal) {
+                menuModal.classList.add('hidden');
+            }
+        });
         var map = L.map('map');
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 
@@ -71,8 +121,3 @@
     {% if user.is_authenticated %}
     <p>Welcome. You are logged in as {{user.username}} </p>
     {% endif %}
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Logout</button>
-    </form> -->
