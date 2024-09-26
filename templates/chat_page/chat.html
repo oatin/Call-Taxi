@@ -1,0 +1,101 @@
+{% load socialaccount %} 
+{% load static %}
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* กำหนดขนาดของ iPhone 12 Pro */
+        @media screen and (min-width: 390px) and (max-width: 844px) {
+            body {
+                width: 390px; /* ความกว้างเท่ากับ iPhone 12 Pro */
+                height: 844px; /* ความสูงเท่ากับ iPhone 12 Pro */
+                margin: 0 auto; /* จัดหน้าเว็บให้อยู่ตรงกลาง */
+                overflow: hidden; /* ป้องกันการเลื่อนเกินหน้าจอ */
+            }
+        }
+    </style>
+</head>
+<body class="bg-yellow-500 min-h-screen flex flex-col max-w-full mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 bg-yellow-500 text-white">
+        <button class="text-xl">
+            <!-- Back button (arrow icon) -->
+            ⬅
+        </button>
+        <div class="flex items-center space-x-2">
+            <img src="https://img.icons8.com/emoji/48/man.png" alt="User Avatar" class="w-10 h-10 rounded-full">
+            <span class="text-lg font-bold">Anil</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="text-xl">📞</button>
+            <button class="text-xl">⋮</button>
+        </div>
+    </div>
+
+    <!-- Chat body -->
+    <div class="flex-1 p-4 space-y-3 overflow-y-auto">
+        <!-- Incoming message -->
+        <div class="flex flex-col space-y-2">
+            <div class="bg-gray-200 p-3 rounded-lg inline-block max-w-xs">
+                <span>Hey There!</span>
+                <span class="block text-xs text-gray-600 mt-1">Today, 8:30pm</span>
+            </div>
+            <div class="bg-gray-200 p-3 rounded-lg inline-block max-w-xs">
+                <span>How are you?</span>
+                <span class="block text-xs text-gray-600 mt-1">Today, 8:30pm</span>
+            </div>
+            <div class="bg-gray-200 p-3 rounded-lg inline-block max-w-xs">
+                <span>How was your day?</span>
+                <span class="block text-xs text-gray-600 mt-1">Today, 8:30pm</span>
+            </div>
+        </div>
+
+        <!-- Outgoing message -->
+        <div class="flex flex-col items-end space-y-2">
+            <div class="bg-black text-white p-3 rounded-lg inline-block max-w-xs">
+                <span>Hello!</span>
+                <span class="block text-xs text-gray-400 mt-1">Today, 8:33pm</span>
+            </div>
+            <div class="bg-black text-white p-3 rounded-lg inline-block max-w-xs">
+                <span>I am fine and how are you?</span>
+                <span class="block text-xs text-gray-400 mt-1">Today, 8:34pm</span>
+            </div>
+            <div class="bg-black text-white p-3 rounded-lg inline-block max-w-xs">
+                <span>Today was great!!!</span>
+                <span class="block text-xs text-gray-400 mt-1">Today, 8:34pm</span>
+            </div>
+        </div>
+
+        <!-- Incoming message -->
+        <div class="flex flex-col space-y-2">
+            <div class="bg-gray-100 p-3 rounded-lg inline-block max-w-xs">
+                <span>I am doing well, Can we meet tomorrow?</span>
+                <span class="block text-xs text-gray-600 mt-1">Today, 8:36pm</span>
+            </div>
+        </div>
+
+        <!-- Outgoing message -->
+        <div class="flex flex-col items-end space-y-2">
+            <div class="bg-black text-white p-3 rounded-lg inline-block max-w-xs">
+                <span>Yes Sure!</span>
+                <span class="block text-xs text-gray-400 mt-1">Today, 8:58pm</span>
+            </div>
+            <div class="bg-black text-white p-3 rounded-lg inline-block max-w-xs">
+                <span>At what time?</span>
+                <span class="block text-xs text-gray-400 mt-1">Today, 8:58pm</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input area -->
+    <div class="flex items-center p-4 bg-white">
+        <input type="text" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Type your message here...">
+        <button class="ml-2 text-xl"><img class="max-h-5" src="{% static 'img/send.png' %}" alt="" srcset=""></button>
+    </div>
+</body>
+</html>
