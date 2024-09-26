@@ -11,8 +11,13 @@ class UserProfile(models.Model):
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
+<<<<<<< HEAD
         ('passenger', 'ผู้ใช้บริการ'),
         ('driver', 'คนขับ Taxi'),
+=======
+        ('passenger', 'ผู้โดยสาร'),
+        ('driver', 'คนขับ'),
+>>>>>>> a223dcd8209e2b5e8efb52f07b4565be1d33d095
     ]
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_driver = models.BooleanField(default=False)
@@ -25,18 +30,3 @@ class CustomUser(AbstractUser):
         permissions = [
             ("can_view", "Can view user"),
         ]
-
-    
-class TaxiDriver(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    license_number = models.CharField(max_length=50, unique=True)
-    car_model = models.CharField(max_length=100)
-    car_plate = models.CharField(max_length=20, unique=True)
-    status = models.CharField(max_length=20, choices=[
-        ('available', 'Available'),
-        ('busy', 'Busy'),
-        ('offline', 'Offline'),
-    ])
-
-    def __str__(self):
-        return f"TaxiDriver({self.user.username}, License: {self.license_number})"

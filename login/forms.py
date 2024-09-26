@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
-from .models import CustomUser, TaxiDriver
+from .models import CustomUser
+from home.models import TaxiDriver
 
 class CustomSignupForm(UserCreationForm):
     class_name_input = "mt-1 block w-full p-2 border border-gray-300 rounded-md"

@@ -8,49 +8,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Call Taxi : Home</title>
     {% tailwind_css %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body class="flex flex-col h-screen">
-    <div class="bg-[#333333] h-[20%] flex items-center justify-center rounded-b-lg">
-        <h1 class="text-white text-2xl">Call Taxi - Top Menu</h1>
+    <div class="bg-[#333333] h-1/5 flex flex-col md:flex-row items-center p-4 rounded-b-lg">
+        <!-- Hamburger Menu -->
+        <div class="group flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white p-2 hover:bg-slate-200" id="menu-btn">
+            <div class="space-y-2">
+                <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:translate-y-1.5 group-hover:rotate-45"></span>
+                <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:-translate-y-1.5 group-hover:-rotate-45"></span>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-white text-2xl ml-4">Call Taxi</h1>
+
+        <div class="ml-auto flex items-center space-x-2 w-full md:w-auto">
+            <input type="text" id="current-location" placeholder="ที่อยู่ปัจจุบัน" class="p-2 rounded-lg w-full md:w-48">
+            <input type="text" id="destination" placeholder="ปลายทาง" class="p-2 rounded-lg w-full md:w-48">
+            <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">เรียกรถ</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="menu-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1000]">
+        <div class="bg-white p-8 rounded-lg w-11/12 max-w-md">
+            <h2 class="text-2xl font-semibold mb-4">Menu</h2>
+            <ul class="space-y-2">
+                <li><a href="้home" class="block text-lg text-gray-700 hover:text-orange-500">Home</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Chat</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Account</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Contact</a></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="POST" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="block text-lg text-gray-700 hover:text-orange-500">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+            <button id="close-modal" class="mt-6 block w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">Close</button>
+        </div>
     </div>
     
     <div id="map" class="flex-1"></div>
 
-    <div class="bg-[#FFB900] h-[20%] flex items-center justify-center rounded-t-lg">
+    <div class="bg-[#FFB900] h-1/5 flex items-center justify-center rounded-t-lg">
         <h1 class="text-black text-2xl">Call Taxi - Bottom Menu</h1>
-    </div>
+        <div class="flex space-x 5"> <!-- ใช้ space-x-4 เพื่อเพิ่มระยะห่างระหว่างกล่อง -->
+            <div class="container">
+                <div class="box">
+                
+                    <img src="https://cdn-icons-png.flaticon.com/128/3799/3799798.png" alt="Taxi Image" height="50px" >
+                  <p>Taxi</p>
+                  <p>1KMh</p>
+                  <style>
+                    .container {
+  display: flex;
+  justify-content: space-between; /* ให้มีช่องว่างระหว่างกล่อง */
+  align-items: center; /* จัดตำแหน่งให้ตรงกันในแนวตั้ง */
+  background-color: #fdb827; /* สีพื้นหลังตามที่เห็น */
+  padding: 20px;
+}
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+.box {
+  width: 150px; /* ความกว้างของกล่อง */
+  height: 150px; /* ความสูงของกล่อง */
+  background-color: #333333; /* สีพื้นหลังของกล่อง */
+  border-radius: 20px; /* มุมโค้งมน */
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); /* เงา */
+  padding: 10px;
+  text-align: center;
+  color: #fdb827; /* สีข้อความ */
+}
+
+img {
+  width: 50px;
+  height: auto;
+}
+
+p {
+  margin: 5px 0;
+}
+
+                  </style>
+                  
+                </div>
+                <div class="box">
+                  <img src="https://cdn-icons-png.flaticon.com/128/3799/3799798.png" alt="Taxi Image" height="50px" >
+                  <p>Taxi</p>
+                  <p>5KM</p>
+                </div>
+                <div class="box">
+                  <img src="https://cdn-icons-png.flaticon.com/128/3799/3799798.png" alt="Taxi Image" height="50px" >
+                  <p>Taxi</p>
+                  <p>3KM</p>
+                </div>
+              </div>
+              
+              
+    </div>
     <script>
-        var map = L.map('map');
+        const menuBtn = document.getElementById('menu-btn');
+        const menuModal = document.getElementById('menu-modal');
+        const closeModal = document.getElementById('close-modal');
+        const callTaxiBtn = document.getElementById('call-taxi');
+
+        menuBtn.addEventListener('click', function() {
+            menuModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', function() {
+            menuModal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === menuModal) {
+                menuModal.classList.add('hidden');
+            }
+        });
+
+        var map = L.map('map').setView([13.7563, 100.5018], 13); 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 
-        var marker;
-
+        var marker; 
+        var destinationMarker; 
+        var routeControl; 
+        var taxiMarkers = [];
         function setViewToCurrentLocation() {
             if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
+                navigator.geolocation.getCurrentPosition(function (position) {
                     var lat = position.coords.latitude;
                     var lon = position.coords.longitude;
-
+                    document.getElementById("current-location").value = [lat, lon];
+                    
                     map.setView([lat, lon], 15);
 
                     if (marker) {
-                        map.removeLayer(marker);
+                        map.removeLayer(marker);  
                     }
 
                     marker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup('Your current location')
+                        .bindPopup('ที่อยู่คุณปัจจุบัน')
                         .openPopup();
 
-                    document.querySelector('input[placeholder="หา้เมหวทกาลยูธรณาธนี"]').value = 
-                        `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
-                }, function(error) {
+                }, function (error) {
                     console.error("Error getting location:", error.message);
                     alert("Unable to retrieve your location. Please enter it manually.");
                 });
@@ -59,20 +165,55 @@
                 alert("Geolocation is not supported by your browser. Please enter your location manually.");
             }
         }
+        map.on('click', function (ev) {
+            if (destinationMarker) {
+                map.removeLayer(destinationMarker);
+            }
+            destinationMarker = L.marker([ev.latlng.lat, ev.latlng.lng]).addTo(map)
+                .bindPopup('จุดหมาย')
+                .openPopup();
 
-        // Call the function when the page loads
+            document.getElementById("destination").value = [ev.latlng.lat, ev.latlng.lng];
+        });
+
+        callTaxiBtn.addEventListener('click', function() {
+            var currentLocation = document.getElementById("current-location").value.split(',');
+            var destination = document.getElementById("destination").value.split(',');
+
+            if (currentLocation.length === 2 && destination.length === 2) {
+                if (routeControl) {
+                    map.removeControl(routeControl);  
+                }
+            } else {
+                alert("Please ensure both current location and destination are set.");
+            }
+        });
+        function updateMap() {
+            // ใช้ Fetch API เพื่อดึงตำแหน่งคนขับ
+            fetch("{% url 'taxi_locations' %}")
+                .then(response => response.json())
+                .then(data => {
+
+                    data.forEach(driver => {
+                        var myIcon = L.icon({
+                            iconUrl: "https://cdn-icons-png.flaticon.com/512/1801/1801444.png",
+                            iconSize: [38, 95], 
+                            iconAnchor: [22, 94], 
+                            popupAnchor: [-3, -76], 
+                        });
+                        console.log("test");
+                        L.marker([50.505, 30.57], {icon: myIcon}).addTo(map);
+                        L.marker([driver.latitude, driver.longitude], {icon: myIcon})
+                            .addTo(map)
+                            .bindPopup(`<b>${driver.driver_name}</b>`).openPopup();
+                    });
+                })
+                .catch(error => console.error('Error fetching driver locations:', error));
+        }
+
+        updateMap();
         setViewToCurrentLocation();
     </script>
 </body>
 
 </html>
-
-<!-- <h1 style="text-align: center;"> My Home </h1>
-    {% if user.is_authenticated %}
-    <p>Welcome. You are logged in as {{user.username}} </p>
-    {% endif %}
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Logout</button>
-    </form> -->
