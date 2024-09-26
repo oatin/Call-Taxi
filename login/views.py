@@ -6,7 +6,10 @@ from .forms import CustomSignupForm
 # Create your views here.
 def catch_all_view(request, url):
     if request.user.is_authenticated:
-        return redirect('home')  # redirect ไปยังหน้า home ถ้าล็อกอินแล้ว
+        if request.user.role == "คนขับ":
+            return redirect('home') 
+        else:
+            return redirect('home-taxi') 
     else:
         return redirect('/')
 
