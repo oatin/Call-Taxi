@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User as AuthUser
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User as AuthUser, AbstractUser
 from django.conf import settings
 
 class UserProfile(models.Model):
@@ -11,8 +10,13 @@ class UserProfile(models.Model):
         return self.user.username
 
 class CustomUser(AbstractUser):
+    ROLE_CHOICES = [
+        ('passenger', 'Passenger'),
+        ('driver', 'Taxi Driver'),
+    ]
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_driver = models.BooleanField(default=False)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='passenger')
 
     def __str__(self):
         return self.username

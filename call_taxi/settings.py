@@ -190,5 +190,5 @@ SOCIALACCOUNT_PROVIDERS = {
 AUTH_USER_MODEL = 'login.CustomUser'
 
 ACCOUNT_FORMS = {
-    'signup': 'call_taxi.forms.CustomSignupForm',
+    'signup': 'login.forms.CustomSignupForm',
 }

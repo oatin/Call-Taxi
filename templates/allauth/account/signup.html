@@ -9,31 +9,64 @@
     <title>Call Taxi : Signup</title>
     {% tailwind_css %}
 </head>
-<body>
-    <div class="container flex flex-col justify-center items-center h-screen">
-        <div class="logo h-2/5 min-w-fit">
-            <img class="max-h-svh" src="{% static 'img/taxi-svgrepo-com.svg' %}" alt="">
-            <p class="text-gray-900 text-5xl dark:text-white font-[900]">Call Taxi</p>
-        </div>
-        <div class="menu bg-yellow-500 w-full h-3/5 mt-auto flex flex-col justify-center items-center min-w-fit rounded-t-lg p-6">
-            <p class="text-black-900 text-3xl font-semibold mb-6">เข้าสู่ระบบ</p>
-            <form method="POST" action="{% url 'login' %}" class="w-full max-w-md flex flex-col gap-4">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="text" name="username" id="id_username" class="p-3 border border-gray-300 rounded-md" placeholder="Username">
-                <input type="password" name="password" id="id_password" class="p-3 border border-gray-300 rounded-md" placeholder="Password">
-                <input type="submit" value="เข้าสู่ระบบ" class="p-3 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-colors">
-            </form>
-            <div class="mt-4">
-                <a href="{% provider_login_url 'google' %}">
-                    <button class="p-3 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-colors flex items-center">
-                        <img class="max-w-5 max-h-5 mr-2 " src ="{% static 'img/google.png' %}" alt="" srcset="">Login with Google
-                    </button>
-                </a>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="bg-white shadow-md rounded-lg p-6 w-96">
+        <h2 class="text-2xl font-semibold text-center mb-4">Create Account</h2>
+        <form method="POST" id="signup-form">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                {{ form.role }}
             </div>
-            <p class="mt-4">Need Here? <a class="text-black-900 underline" href="register" class="text-blue-500 underline">Register</a></p>
-        </div>
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-4">
+                <label for="password1" class="block text-sm font-medium text-gray-700">Password</label>
+                {{ form.password1 }}
+            </div>
+            <div class="mb-4">
+                <label for="password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                {{ form.password2 }}
+            </div>
+            <div class="mb-4">
+                <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                {{ form.phone_number }}
+            </div>
+            
+            <div id="driver-fields" style="display: none;">
+                <div class="mb-4">
+                    <label for="license_number" class="block text-sm font-medium text-gray-700">License Number</label>
+                    {{ form.license_number }}
+                </div>
+                <div class="mb-4">
+                    <label for="car_model" class="block text-sm font-medium text-gray-700">Car Model</label>
+                    {{ form.car_model }}
+                </div>
+                <div class="mb-4">
+                    <label for="car_plate" class="block text-sm font-medium text-gray-700">Car Plate</label>
+                    {{ form.car_plate }}
+                </div>
+            </div>
+        
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded">Sign Up</button>
+        </form>
     </div>
+
+    <script>
+        const roleField = document.getElementById('id_role');
+        const driverFields = document.getElementById('driver-fields');
+    
+        roleField.addEventListener('change', function() {
+            if (this.value === 'driver') {
+                driverFields.style.display = 'block';
+            } else {
+                driverFields.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
 <!-- <h1 style="text-align: center;"> My google OAuth Project </h1>

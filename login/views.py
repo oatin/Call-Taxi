@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
+from .forms import CustomSignupForm
 
 # Create your views here.
 def catch_all_view(request, url):
@@ -8,7 +9,17 @@ def catch_all_view(request, url):
         return redirect('home')  # redirect ไปยังหน้า home ถ้าล็อกอินแล้ว
     else:
         return redirect('/')
-    
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = CustomSignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # เปลี่ยน URL ไปที่หน้า login หรือหน้าอื่นที่ต้องการ
+    else:
+        form = CustomSignupForm()
+    return render(request, 'allauth/account/signup.html', {'form': form})
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
