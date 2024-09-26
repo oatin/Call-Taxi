@@ -26,9 +26,8 @@
         <h1 class="text-white text-2xl ml-4">Call Taxi</h1>
 
         <div class="ml-auto flex items-center space-x-2 w-full md:w-auto">
-            <input type="text" id="current-location" placeholder="ที่อยู่ปัจจุบัน" class="p-2 rounded-lg w-full md:w-48">
-            <input type="text" id="destination" placeholder="ปลายทาง" class="p-2 rounded-lg w-full md:w-48">
-            <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">เรียกรถ</button>
+            <input type="text" id="current-location" placeholder="ขับงานในเขต" class="p-2 rounded-lg w-full md:w-48">
+            <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">ว่าง</button>
         </div>
     </div>
 
@@ -87,6 +86,7 @@
         var destinationMarker; 
         var routeControl; 
         var taxiMarkers = [];
+
         function setViewToCurrentLocation() {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(function (position) {
@@ -99,6 +99,13 @@
                     if (marker) {
                         map.removeLayer(marker);  
                     }
+
+                    var circle = L.circle([lat, lon], {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.5,
+                        radius: 1000
+                    }).addTo(map);
 
                     marker = L.marker([lat, lon]).addTo(map)
                         .bindPopup('ที่อยู่คุณปัจจุบัน')

@@ -12,6 +12,7 @@
 <body class="bg-gray-100 flex items-center justify-center h-screen">
 
     <div class="bg-yellow-500 shadow-md rounded-lg p-6 w-96">
+<<<<<<< HEAD
         <h2 class="text-2xl font-semibold text-center mb-4">กรุณาเลือกประเภทของคุณ</h2>
         <form method="POST" id="signup-form">
             {% csrf_token %}
@@ -33,6 +34,29 @@
             </div>
             <div class="mb-4">
                 <label for="เบอร์โทรศัพท์" class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
+=======
+        <h2 class="text-2xl font-semibold text-center mb-4">ประเภทใช้งาน</h2>
+        <form method="POST" id="signup-form">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="role" class="block text-sm font-medium text-gray-700">ประเภทใช้งาน</label>
+                {{ form.role }}
+            </div>
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700">ชื่อผู้ใช้</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-4">
+                <label for="password1" class="block text-sm font-medium text-gray-700">รหัสผ่าน</label>
+                {{ form.password1 }}
+            </div>
+            <div class="mb-4">
+                <label for="password2" class="block text-sm font-medium text-gray-700">ยืนยันรหัสผ่าน</label>
+                {{ form.password2 }}
+            </div>
+            <div class="mb-4">
+                <label for="phone_number" class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
+>>>>>>> a223dcd8209e2b5e8efb52f07b4565be1d33d095
                 {{ form.phone_number }}
             </div>
             
@@ -46,7 +70,7 @@
                     {{ form.car_model }}
                 </div>
                 <div class="mb-4">
-                    <label for="car_plate" class="block text-sm font-medium text-gray-700">Car Plate</label>
+                    <label for="car_plate" class="block text-sm font-medium text-gray-700">เลขทะเบียนรถ</label>
                     {{ form.car_plate }}
                 </div>
             </div>
