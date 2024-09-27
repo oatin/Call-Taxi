@@ -68,37 +68,40 @@
         const closeModal = document.getElementById('close-modal');
         const callTaxiBtn = document.getElementById('call-taxi');
 
+        // Show/hide modal functionality
         menuBtn.addEventListener('click', function() {
             menuModal.classList.remove('hidden');
         });
-
         closeModal.addEventListener('click', function() {
             menuModal.classList.add('hidden');
         });
 
-        // Close modal when clicking outside of it
+        // Close modal when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target === menuModal) {
                 menuModal.classList.add('hidden');
             }
         });
 
-        var map = L.map('map').setView([13.7563, 100.5018], 13); 
+        var map = L.map('map').setView([13.7563, 100.5018], 13); // Default center location
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 
-        var marker; 
-        var destinationMarker; 
-        var routeControl; 
-        var taxiMarkers = [];
+        var marker; // Marker for current location
+        var destinationMarker; // Marker for destination
+        var routeControl; // Route control (optional if using Leaflet Routing Machine)
+        var taxiMarkers = []; // Array to store taxi markers
+
+        // Geolocation function to get user's current position
         function setViewToCurrentLocation() {
             if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function (position) {
+                navigator.geolocation.getCurrentPosition(function(position) {
                     var lat = position.coords.latitude;
                     var lon = position.coords.longitude;
                     document.getElementById("current-location").value = [lat, lon];
-                    
+
                     map.setView([lat, lon], 15);
 
+                    // Remove previous marker if it exists
                     if (marker) {
                         map.removeLayer(marker);  
                     }
@@ -107,7 +110,7 @@
                         .bindPopup('ที่อยู่คุณปัจจุบัน')
                         .openPopup();
 
-                }, function (error) {
+                }, function(error) {
                     console.error("Error getting location:", error.message);
                     alert("Unable to retrieve your location. Please enter it manually.");
                 });
@@ -116,7 +119,9 @@
                 alert("Geolocation is not supported by your browser. Please enter your location manually.");
             }
         }
-        map.on('click', function (ev) {
+
+        // Event listener for destination selection
+        map.on('click', function(ev) {
             if (destinationMarker) {
                 map.removeLayer(destinationMarker);
             }
@@ -127,31 +132,49 @@
             document.getElementById("destination").value = [ev.latlng.lat, ev.latlng.lng];
         });
 
+        // Call Taxi functionality
         callTaxiBtn.addEventListener('click', function() {
             var currentLocation = document.getElementById("current-location").value.split(',');
             var destination = document.getElementById("destination").value.split(',');
 
             if (currentLocation.length === 2 && destination.length === 2) {
+                // Remove previous route if it exists
                 if (routeControl) {
                     map.removeControl(routeControl);  
                 }
+
+                // Draw the route between current location and destination (assuming Leaflet Routing Machine)
+                routeControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(currentLocation[0], currentLocation[1]),
+                        L.latLng(destination[0], destination[1])
+                    ],
+                    routeWhileDragging: true
+                }).addTo(map);
+
             } else {
                 alert("Please ensure both current location and destination are set.");
             }
         });
+
+        // Set initial location to user's current location
         setViewToCurrentLocation();
 
-        
+        // Icon for taxi markers
         var myIcon = L.icon({
             iconUrl: 'https://cdn-icons-png.flaticon.com/128/1946/1946780.png',
             iconSize: [32, 32],
-            iconAnchor: [32, 32],
-            popupAnchor: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32],
         });
 
+        // Loop through drivers and add them to the map
         {% for driver in drivers %}
-            var marker = L.marker([{{ driver.current_location.latitude }}, {{ driver.current_location.longitude }}], {icon: myIcon}).addTo(map);
-            marker.bindPopup('<strong>{{ driver.user.username }}</strong><br>License: {{ driver.license_number }}<br>Car: {{ driver.car_model }}<br>Status: {{ driver.status }}');
+            {% if driver.current_location %}
+                var taxiMarker = L.marker([{{ driver.current_location.latitude }}, {{ driver.current_location.longitude }}], {icon: myIcon}).addTo(map);
+                taxiMarker.bindPopup('<strong>{{ driver.user.username }}</strong><br>License: {{ driver.license_number }}<br>Car: {{ driver.car_model }}<br>Status: {{ driver.status }}');
+                taxiMarkers.push(taxiMarker); // Add taxi marker to array for further use
+            {% endif %}
         {% endfor %}
     </script>
 </body>
