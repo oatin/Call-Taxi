@@ -149,10 +149,10 @@
             popupAnchor: [32, 32],
         });
 
-        L.marker([13.746176,100.5420544], {icon: myIcon}).addTo(map);
-        L.marker([13.746176, 100.5420544], { icon: myIcon })
-        .addTo(map)
-        .bindPopup('<b>รายละเอียด:</b><br>ที่ตั้งนี้มีความสำคัญเพราะ...<br>ข้อมูลเพิ่มเติมที่คุณต้องการแสดง.');
+        {% for driver in drivers %}
+            var marker = L.marker([{{ driver.current_location.latitude }}, {{ driver.current_location.longitude }}], {icon: myIcon}).addTo(map);
+            marker.bindPopup('<strong>{{ driver.user.username }}</strong><br>License: {{ driver.license_number }}<br>Car: {{ driver.car_model }}<br>Status: {{ driver.status }}');
+        {% endfor %}
     </script>
 </body>
 
