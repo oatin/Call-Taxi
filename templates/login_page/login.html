@@ -9,36 +9,34 @@
     <title>Call Taxi : Login</title>
     {% tailwind_css %}
 </head>
-<body>
-    <div class="container flex flex-col justify-center items-center h-screen">
-        <div class="logo h-2/5 min-w-fit">
-            <img class="max-h-svh" src="{% static 'img/taxi-svgrepo-com.svg' %}" alt="">
-            <p class="text-gray-900 text-5xl dark:text-white font-[900]">Call Taxi</p>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto flex flex-col justify-center items-center min-h-screen p-4">
+        <div class="logo text-center mb-8">
+            <img class="max-h-40 mx-auto" src="{% static 'img/taxi-svgrepo-com.svg' %}" alt="Taxi Logo">
+            <p class="text-gray-900 text-5xl font-black mt-4">Call Taxi</p>
         </div>
-        <div class="menu bg-yellow-500 w-full h-3/5 mt-auto flex flex-col justify-center items-center min-w-fit rounded-t-lg p-6">
-            <p class="text-black-900 text-3xl font-semibold mb-6">เข้าสู่ระบบ</p>
-            <form method="POST" action="{% url 'login' %}" class="w-full max-w-md flex flex-col gap-4">
+        <div class="w-full max-w-md">
+            <h2 class="text-3xl font-semibold text-center mb-6">เข้าสู่ระบบ</h2>
+            <form method="POST" action="{% url 'login' %}" class="space-y-4">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <input type="text" name="username" id="id_username" class="p-3 border border-gray-300 rounded-md" placeholder="Username">
-                <input type="password" name="password" id="id_password" class="p-3 border border-gray-300 rounded-md" placeholder="Password">
-                <input type="submit" value="เข้าสู่ระบบ" class="p-3 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-colors">
+                <input type="text" name="username" id="id_username" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" placeholder="Username">
+                <input type="password" name="password" id="id_password" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" placeholder="Password">
+                <button type="submit" class="w-full p-3 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-colors duration-300">เข้าสู่ระบบ</button>
             </form>
             <div class="mt-4">
-                <a href="{% provider_login_url 'google' %}">
-                    <button class="p-3 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-colors flex items-center">
-                        <img class="max-w-5 max-h-5 mr-2 " src ="{% static 'img/google.png' %}" alt="" srcset="">Login with Google
+                <!-- Direct Google Login Form -->
+                <form method="POST" action="{% provider_login_url 'google' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full p-3 bg-white text-gray-700 font-bold rounded-md border border-gray-300 hover:bg-gray-50 transition-colors duration-300 flex items-center justify-center">
+                        <img class="w-5 h-5 mr-2" src="{% static 'img/google.png' %}" alt="Google logo">
+                        Login with Google
                     </button>
-                </a>
+                </form>
             </div>
-            <p class="mt-4">Need Here? <a class="text-black-900 underline" href="signup/" class="text-blue-500 underline">Register</a></p>
+            <p class="mt-6 text-center">Need an account? <a href="/signup/" class="text-black font-semibold hover:underline">Register</a></p>
+        </div>
         </div>
     </div>
 </body>
 </html>
-<!-- <h1 style="text-align: center;"> My google OAuth Project </h1>
-    {% if user.is_authenticated %}
-    <p>Welcome. You are logged in as {{user.username}} </p>
-    {% else %}
-    <a href="{% provider_login_url 'google' %}">Login with Google</a>
-    {% endif %} -->
