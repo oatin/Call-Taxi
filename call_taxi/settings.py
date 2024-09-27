@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'home',
 
     'tailwind', # New
-    'django_browser_reload', # New
+    # 'django_browser_reload', # New
     'theme', # New
 
     'django.contrib.sites', # New
@@ -63,7 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
-    'django_browser_reload.middleware.BrowserReloadMiddleware',# New
+    # 'django_browser_reload.middleware.BrowserReloadMiddleware',# New
     "allauth.account.middleware.AccountMiddleware", # New
 
 ]

@@ -1,14 +1,13 @@
-from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView # New
 from django.contrib.auth.views import LogoutView
 
-from . import views
+from .views import *
 
 urlpatterns = [
-    path('', views.login_view, name='login'), # New
+    path('signup/', signup_view, name='signup'),
+    path('login/', login_view, name='login'),
     path('accounts/', include('allauth.urls')), # New
-    path('logout/', LogoutView.as_view(next_page='/'), name='logout'), # New
-    path('signup/', views.signup_view, name='signup'), # New
-    path('<path:url>', views.catch_all_view, name='catch_all'), # New
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
+    path('', home_redirect_view, name='home_redirect'),
+    path('<path:url>', home_redirect_view, name='catch_all'),
 ]

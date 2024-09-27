@@ -14,18 +14,21 @@
 </head>
 <body class="flex flex-col h-screen">
     <div class="bg-[#333333] h-1/5 flex flex-col md:flex-row items-center p-4 rounded-b-lg">
-        <!-- Hamburger Menu -->
-        <div class="group flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white p-2 hover:bg-slate-200" id="menu-btn">
-            <div class="space-y-2">
-                <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:translate-y-1.5 group-hover:rotate-45"></span>
-                <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:-translate-y-1.5 group-hover:-rotate-45"></span>
+        <div class="flex items-center space-x-4">
+            <!-- Menu Button -->
+            <div class="group flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white p-2 hover:bg-slate-200" id="menu-btn">
+                <div class="space-y-2">
+                    <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:translate-y-1.5 group-hover:rotate-45"></span>
+                    <span class="block h-1 w-5 origin-center rounded-full bg-[#FFB900] transition-transform ease-in-out group-hover:w-10 group-hover:-translate-y-1.5 group-hover:-rotate-45"></span>
+                </div>
             </div>
+        
+            <!-- Title -->
+            <h1 class="text-white text-2xl">Call Taxi</h1>
         </div>
+        
 
-        <!-- Title -->
-        <h1 class="text-white text-2xl ml-4">Call Taxi</h1>
-
-        <div class="ml-auto flex items-center space-x-2 w-full md:w-auto">
+        <div class="ml-auto flex items-center space-x-2 w-full md:w-auto py-5">
             <input type="text" id="current-location" placeholder="ที่อยู่ปัจจุบัน" class="p-2 rounded-lg w-full md:w-48">
             <input type="text" id="destination" placeholder="ปลายทาง" class="p-2 rounded-lg w-full md:w-48">
             <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">เรียกรถ</button>
@@ -136,31 +139,20 @@
                 alert("Please ensure both current location and destination are set.");
             }
         });
-        function updateMap() {
-            // ใช้ Fetch API เพื่อดึงตำแหน่งคนขับ
-            fetch("{% url 'taxi_locations' %}")
-                .then(response => response.json())
-                .then(data => {
-
-                    data.forEach(driver => {
-                        var myIcon = L.icon({
-                            iconUrl: "https://cdn-icons-png.flaticon.com/512/1801/1801444.png",
-                            iconSize: [38, 95], 
-                            iconAnchor: [22, 94], 
-                            popupAnchor: [-3, -76], 
-                        });
-                        console.log("test");
-                        L.marker([50.505, 30.57], {icon: myIcon}).addTo(map);
-                        L.marker([driver.latitude, driver.longitude], {icon: myIcon})
-                            .addTo(map)
-                            .bindPopup(`<b>${driver.driver_name}</b>`).openPopup();
-                    });
-                })
-                .catch(error => console.error('Error fetching driver locations:', error));
-        }
-
-        updateMap();
         setViewToCurrentLocation();
+
+        
+        var myIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/128/1946/1946780.png',
+            iconSize: [32, 32],
+            iconAnchor: [32, 32],
+            popupAnchor: [32, 32],
+        });
+
+        {% for driver in drivers %}
+            var marker = L.marker([{{ driver.current_location.latitude }}, {{ driver.current_location.longitude }}], {icon: myIcon}).addTo(map);
+            marker.bindPopup('<strong>{{ driver.user.username }}</strong><br>License: {{ driver.license_number }}<br>Car: {{ driver.car_model }}<br>Status: {{ driver.status }}');
+        {% endfor %}
     </script>
 </body>
 
