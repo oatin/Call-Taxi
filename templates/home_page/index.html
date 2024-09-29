@@ -41,8 +41,7 @@
             <h2 class="text-2xl font-semibold mb-4">Menu</h2>
             <ul class="space-y-2">
                 <li><a href="้home" class="block text-lg text-gray-700 hover:text-orange-500">Home</a></li>
-                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Chat</a></li>
-                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Account</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500" id="edit-profile-btn" >Account</a></li>
                 <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Contact</a></li>
                 <li>
                     <form action="{% url 'logout' %}" method="POST" class="inline">
@@ -56,19 +55,83 @@
             <button id="close-modal" class="mt-6 block w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">Close</button>
         </div>
     </div>
+    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100]">
+        <div class="bg-white p-8 rounded-lg w-11/12 max-w-md">
+            <h2 class="text-2xl font-semibold mb-4">แก้ไขข้อมูลส่วนตัว</h2>
+            
+            <form id="profile-form" method="POST" action="{% url 'edit-profile' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="first_name" class="block text-lg font-medium text-gray-700">First Name</label>
+                    <input type="text" name="first_name" id="first_name" value="{{ request.user.first_name }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="last_name" class="block text-lg font-medium text-gray-700">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" value="{{ request.user.last_name }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="username" class="block text-lg font-medium text-gray-700">Username</label>
+                    <input type="text" name="username" id="username" value="{{ request.user.username }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-lg font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" id="email" value="{{ request.user.email }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="phone_number" class="block text-lg font-medium text-gray-700">Phone Number</label>
+                    <input type="text" name="phone_number" id="phone_number" value="{{ request.user.phone_number }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="block text-lg font-medium text-gray-700">Password</label>
+                    <input type="password" name="password" id="password" placeholder="Leave blank to keep current password" class="p-2 border rounded-lg w-full">
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="button" id="close-profile-modal" class="bg-gray-300 p-2 rounded-lg mr-2">ยกเลิก</button>
+                    <button type="submit" class="bg-[#FFB900] p-2 rounded-lg hover:bg-[#FFA500]">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <div id="map" class="flex-1"></div>
-
-    <div class="bg-[#FFB900] h-1/5 flex items-center justify-center rounded-t-lg">
-        <h1 class="text-black text-2xl">Call Taxi - Bottom Menu</h1>
+   
+    <div class="absolute inset-x-0 bottom-0 z-[1000] flex justify-center p-4">
+        <div class="w-full md:w-3/6 flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
+            <!-- Box 1 -->
+            <div class="bg-[#333333] text-black p-4 rounded-lg flex-1 flex items-center justify-center hover:bg-gray-200 cursor-pointer md:h-auto">
+                <h2 class="text-xl">Option 1</h2>
+            </div>
+            <!-- Box 2 -->
+            <div class="bg-[#333333] text-black p-4 rounded-lg flex-1 flex items-center justify-center hover:bg-gray-200 cursor-pointer md:h-auto">
+                <h2 class="text-xl">Option 2</h2>
+            </div>
+            <!-- Box 3 -->
+            <div class="bg-[#333333] text-black p-4 rounded-lg flex-1 flex items-center justify-center hover:bg-gray-200 cursor-pointer md:h-auto">
+                <h2 class="text-xl">Option 3</h2>
+            </div>
+        </div>
+    </div>
     </div>
     <script>
         const menuBtn = document.getElementById('menu-btn');
         const menuModal = document.getElementById('menu-modal');
         const closeModal = document.getElementById('close-modal');
         const callTaxiBtn = document.getElementById('call-taxi');
+        const profileModal = document.getElementById('profile-modal');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const closeProfileModal = document.getElementById('close-profile-modal');
 
-        // Show/hide modal functionality
+        // เปิด modal เมื่อคลิกปุ่มแก้ไขข้อมูลส่วนตัว
+        editProfileBtn.addEventListener('click', function() {
+            profileModal.classList.remove('hidden');
+        });
+
+        // ปิด modal เมื่อคลิกปุ่มปิด
+        closeProfileModal.addEventListener('click', function() {
+            profileModal.classList.add('hidden');
+        });
+
         menuBtn.addEventListener('click', function() {
             menuModal.classList.remove('hidden');
         });
@@ -76,8 +139,10 @@
             menuModal.classList.add('hidden');
         });
 
-        // Close modal when clicking outside
         window.addEventListener('click', function(event) {
+            if (event.target === profileModal) {
+                profileModal.classList.add('hidden');
+            }
             if (event.target === menuModal) {
                 menuModal.classList.add('hidden');
             }

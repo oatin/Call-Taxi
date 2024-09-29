@@ -17,11 +17,15 @@
         </div>
         <div class="w-full max-w-md">
             <h2 class="text-3xl font-semibold text-center mb-6">เข้าสู่ระบบ</h2>
+            
+            {% if error %}
+                <div class="mb-4 text-red-500 text-center">{{ error }}</div>  <!-- Display error message -->
+            {% endif %}
+            
             <form method="POST" action="{% url 'login' %}" class="space-y-4">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <input type="text" name="username" id="id_username" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" placeholder="Username">
-                <input type="password" name="password" id="id_password" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" placeholder="Password">
+                <input type="text" name="username" id="id_username" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" placeholder="Username" required>
+                <input type="password" name="password" id="id_password" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" placeholder="Password" required>
                 <button type="submit" class="w-full p-3 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-colors duration-300">เข้าสู่ระบบ</button>
             </form>
             <div class="mt-4">

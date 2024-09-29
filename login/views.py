@@ -26,6 +26,8 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
     
+    error_message = None 
+    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -34,6 +36,6 @@ def login_view(request):
             login(request, user)
             return redirect('home')
         else:
-            return render(request, 'login_page/login.html', {'error': 'Invalid credentials'})
+            error_message = 'รหัสผ่านหรือชื่อผู้ใช้ไม่ถูกต้อง'  
     
-    return render(request, 'login_page/login.html')
+    return render(request, 'login_page/login.html', {'error': error_message})
