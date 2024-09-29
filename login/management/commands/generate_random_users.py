@@ -9,15 +9,15 @@ class Command(BaseCommand):
     help = 'Generate random taxi drivers and locations'
 
     def handle(self, *args, **kwargs):
-        for i in range(11,20):  # Change this number for more or fewer users
+        for i in range(31,50):  # Change this number for more or fewer users
             # Create a random user
             username = f'driver_{i}'
             password = 'password123'  # You can use a more secure password
             user = User.objects.create_user(username=username, password=password, is_driver=True, role='driver')
 
             # Create a random location
-            latitude = random.uniform(15.1111308, 15.079321395777121)  # Random latitude
-            longitude = random.uniform(104.906969, 104.98075107112528)  # Random longitude
+            latitude = random.uniform(13.746176, 13.706374703033955)  # Random latitude
+            longitude = random.uniform(100.5387776, 100.40954589843751)  # Random longitude
             location = Location.objects.create(user=user, latitude=latitude, longitude=longitude)
 
             # Create a taxi driver

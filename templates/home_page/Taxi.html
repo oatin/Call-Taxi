@@ -26,9 +26,10 @@
             <!-- Title -->
             <h1 class="text-white text-2xl">Call Taxi</h1>
         </div>
+        
 
         <div class="ml-auto flex items-center space-x-2 w-full md:w-auto py-5">
-            <input type="text" id="current-location" placeholder="ขับงานในเขต" class="p-2 rounded-lg w-full md:w-48">
+            <input type="text" id="current-location" placeholder="ที่อยู่ปัจจุบัน" class="p-2 rounded-lg w-full md:w-48">
             <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">ว่าง</button>
         </div>
     </div>
@@ -39,8 +40,7 @@
             <h2 class="text-2xl font-semibold mb-4">Menu</h2>
             <ul class="space-y-2">
                 <li><a href="้home" class="block text-lg text-gray-700 hover:text-orange-500">Home</a></li>
-                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Chat</a></li>
-                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Account</a></li>
+                <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500" id="edit-profile-btn" >Account</a></li>
                 <li><a href="#" class="block text-lg text-gray-700 hover:text-orange-500">Contact</a></li>
                 <li>
                     <form action="{% url 'logout' %}" method="POST" class="inline">
@@ -54,98 +54,222 @@
             <button id="close-modal" class="mt-6 block w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">Close</button>
         </div>
     </div>
+    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100]">
+        <div class="bg-white p-8 rounded-lg w-11/12 max-w-md">
+            <h2 class="text-2xl font-semibold mb-4">แก้ไขข้อมูลส่วนตัว</h2>
+            
+            <form id="profile-form" method="POST" action="{% url 'edit-profile' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="first_name" class="block text-lg font-medium text-gray-700">First Name</label>
+                    <input type="text" name="first_name" id="first_name" value="{{ request.user.first_name }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="last_name" class="block text-lg font-medium text-gray-700">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" value="{{ request.user.last_name }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="username" class="block text-lg font-medium text-gray-700">Username</label>
+                    <input type="text" name="username" id="username" value="{{ request.user.username }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-lg font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" id="email" value="{{ request.user.email }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="phone_number" class="block text-lg font-medium text-gray-700">Phone Number</label>
+                    <input type="text" name="phone_number" id="phone_number" value="{{ request.user.phone_number }}" class="p-2 border rounded-lg w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="block text-lg font-medium text-gray-700">Password</label>
+                    <input type="password" name="password" id="password" placeholder="Leave blank to keep current password" class="p-2 border rounded-lg w-full">
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="button" id="close-profile-modal" class="bg-gray-300 p-2 rounded-lg mr-2">ยกเลิก</button>
+                    <button type="submit" class="bg-[#FFB900] p-2 rounded-lg hover:bg-[#FFA500]">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <div id="map" class="flex-1"></div>
 
-    <div class="bg-[#FFB900] h-1/5 flex items-center justify-center rounded-t-lg">
-        <h1 class="text-black text-2xl">Call Taxi - Bottom Menu</h1>
+    <div id="work-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100]">
+        <div class="bg-white p-8 rounded-lg w-11/12 max-w-md">
+            <h2 class="text-2xl font-semibold mb-4">งาน</h2>
+            
+            <form id="work-form" method="POST" action="{% url 'job_request' %}">
+                {% csrf_token %}
+                {% for job in job_requests %}
+                <div class="flex flex-col items-center pb-10" 
+                data-start-lat="{{ job.start_location.latitude }}" 
+                data-start-lon="{{ job.start_location.longitude }}"
+                data-driver-id="{{ job.driver.id }}">
+                    <h1 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ job.passenger.username }}</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ job.start_location }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ job.status }}</p>
+                    <div class="flex mt-4 md:mt-6">
+                        <button type="submit" name="action" value="decline_{{ job.id }}" class="py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-orange-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">ไม่รับงาน</button>
+                        <button id="accept_" type="submit" name="action" value="accept_{{ job.id }}" class="py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-orange-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">รับงาน</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </form>
+            
+            <button id="close-modal-work" class="mt-6 block w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">Close</button>
+        </div>
+    </div>
+
     </div>
     <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const menuModal = document.getElementById('menu-modal');
-        const closeModal = document.getElementById('close-modal');
-        const callTaxiBtn = document.getElementById('call-taxi');
+        // DOM Elements
+        const elements = {
+            menuBtn: document.getElementById('menu-btn'),
+            menuModal: document.getElementById('menu-modal'),
+            closeModal: document.getElementById('close-modal'),
+            callTaxiBtn: document.getElementById('call-taxi'),
+            profileModal: document.getElementById('profile-modal'),
+            editProfileBtn: document.getElementById('edit-profile-btn'),
+            closeProfileModal: document.getElementById('close-profile-modal'),
+            currentLocationInput: document.getElementById("current-location")
+        };
 
-        menuBtn.addEventListener('click', function() {
-            menuModal.classList.remove('hidden');
+        document.getElementById('call-taxi').addEventListener('click', function() {
+            document.getElementById('work-modal').classList.remove('hidden');
         });
 
-        closeModal.addEventListener('click', function() {
-            menuModal.classList.add('hidden');
+        document.getElementById('close-modal-work').addEventListener('click', function() {
+            document.getElementById('work-modal').classList.add('hidden');
         });
 
-        // Close modal when clicking outside of it
+        // ปิด modal เมื่อคลิกนอก modal
         window.addEventListener('click', function(event) {
-            if (event.target === menuModal) {
-                menuModal.classList.add('hidden');
+            const modal = document.getElementById('work-modal');
+            if (event.target === modal) {
+                modal.classList.add('hidden');
             }
         });
+        // Map configuration
+        const mapConfig = {
+            initialView: [13.7563, 100.5018],
+            initialZoom: 13,
+            tileLayerUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        };
 
-        var map = L.map('map').setView([13.7563, 100.5018], 13); 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+        // Map variables
+        let map, marker, destinationMarker, routeControl;
+        const taxiMarkers = [];
 
-        var marker; 
-        var destinationMarker; 
-        var routeControl; 
-        var taxiMarkers = [];
+        // Initialize map
+        function initializeMap() {
+            map = L.map('map').setView(mapConfig.initialView, mapConfig.initialZoom);
+            L.tileLayer(mapConfig.tileLayerUrl, {}).addTo(map);
+        }
 
+        // UI Event Listeners
+        function setupEventListeners() {
+            elements.editProfileBtn.addEventListener('click', () => toggleModal(elements.profileModal, false));
+            elements.closeProfileModal.addEventListener('click', () => toggleModal(elements.profileModal, true));
+            elements.menuBtn.addEventListener('click', () => toggleModal(elements.menuModal, false));
+            elements.closeModal.addEventListener('click', () => toggleModal(elements.menuModal, true));
+
+            window.addEventListener('click', (event) => {
+                if (event.target === elements.profileModal) toggleModal(elements.profileModal, true);
+                if (event.target === elements.menuModal) toggleModal(elements.menuModal, true);
+            });
+
+            map.on('click', handleMapClick);
+        }
+
+        // Toggle modal visibility
+        function toggleModal(modal, hide) {
+            modal.classList.toggle('hidden', hide);
+        }
+
+        // Handle map click for destination selection
+        function handleMapClick(ev) {
+            if (destinationMarker) map.removeLayer(destinationMarker);
+            
+            destinationMarker = L.marker(ev.latlng).addTo(map)
+                .bindPopup('จุดหมาย')
+                .openPopup();
+        }
+
+        // Set view to current location
         function setViewToCurrentLocation() {
             if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var lat = position.coords.latitude;
-                    var lon = position.coords.longitude;
-                    document.getElementById("current-location").value = [lat, lon];
-                    
-                    map.setView([lat, lon], 15);
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude: lat, longitude: lon } = position.coords;
+                        elements.currentLocationInput.value = `${lat},${lon}`;
+                        map.setView([lat, lon], 15);
+                        
+                        if (marker) map.removeLayer(marker);
+                        
+                        marker = L.marker([lat, lon]).addTo(map)
+                            .bindPopup('ที่อยู่คุณปัจจุบัน')
+                            .openPopup();
 
-                    if (marker) {
-                        map.removeLayer(marker);  
+                        var circle = L.circle([lat, lon], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 1000
+                        }).addTo(map);
+                    },
+                    (error) => {
+                        console.error("Error getting location:", error.message);
+                        alert("Unable to retrieve your location. Please enter it manually.");
                     }
-
-                    var circle = L.circle([lat, lon], {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5,
-                        radius: 1000
-                    }).addTo(map);
-
-                    marker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup('ที่อยู่คุณปัจจุบัน')
-                        .openPopup();
-
-                }, function (error) {
-                    console.error("Error getting location:", error.message);
-                    alert("Unable to retrieve your location. Please enter it manually.");
-                });
+                );
             } else {
                 console.error("Geolocation is not supported by this browser.");
                 alert("Geolocation is not supported by your browser. Please enter your location manually.");
             }
         }
-        map.on('click', function (ev) {
-            if (destinationMarker) {
-                map.removeLayer(destinationMarker);
-            }
-            destinationMarker = L.marker([ev.latlng.lat, ev.latlng.lng]).addTo(map)
-                .bindPopup('จุดหมาย')
-                .openPopup();
 
-            document.getElementById("destination").value = [ev.latlng.lat, ev.latlng.lng];
-        });
+        // Initialize the application
+        function init() {
+            initializeMap();
+            setupEventListeners();
+            setViewToCurrentLocation();
+        }
 
-        callTaxiBtn.addEventListener('click', function() {
-            var currentLocation = document.getElementById("current-location").value.split(',');
-            var destination = document.getElementById("destination").value.split(',');
+        document.addEventListener("DOMContentLoaded", function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
 
-            if (currentLocation.length === 2 && destination.length === 2) {
-                if (routeControl) {
-                    map.removeControl(routeControl);  
-                }
+                    // Send the location to the server
+                    fetch("{% url 'save_location' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is sent
+                        },
+                        body: `latitude=${latitude}&longitude=${longitude}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Location saved:", data.location);
+                        } else {
+                            console.error("Error saving location:", data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch error:", error);
+                    });
+                }, function(error) {
+                    console.error("Geolocation error:", error);
+                });
             } else {
-                alert("Please ensure both current location and destination are set.");
+                console.error("Geolocation is not supported by this browser.");
             }
         });
-        setViewToCurrentLocation();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 

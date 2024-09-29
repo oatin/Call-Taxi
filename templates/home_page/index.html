@@ -31,7 +31,7 @@
         <div class="ml-auto flex items-center space-x-2 w-full md:w-auto py-5">
             <input type="text" id="current-location" placeholder="ที่อยู่ปัจจุบัน" class="p-2 rounded-lg w-full md:w-48">
             <input type="text" id="destination" placeholder="ปลายทาง" class="p-2 rounded-lg w-full md:w-48">
-            <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">เรียกรถ</button>
+            <button id="call-taxi" class="bg-[#FFB900] text-black p-2 rounded-lg hover:bg-[#FFA500] w-full md:w-auto">เช็คสถานะการเรียก</button>
         </div>
     </div>
 
@@ -95,153 +95,194 @@
     </div>
     
     <div id="map" class="flex-1"></div>
-   
-    <div class="absolute inset-x-0 bottom-0 z-[1000] flex justify-center p-4">
-        <div class="w-full md:w-3/6 flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
-            <!-- Box 1 -->
-            <div class="bg-[#333333] text-black p-4 rounded-lg flex-1 flex items-center justify-center hover:bg-gray-200 cursor-pointer md:h-auto">
-                <h2 class="text-xl">Option 1</h2>
-            </div>
-            <!-- Box 2 -->
-            <div class="bg-[#333333] text-black p-4 rounded-lg flex-1 flex items-center justify-center hover:bg-gray-200 cursor-pointer md:h-auto">
-                <h2 class="text-xl">Option 2</h2>
-            </div>
-            <!-- Box 3 -->
-            <div class="bg-[#333333] text-black p-4 rounded-lg flex-1 flex items-center justify-center hover:bg-gray-200 cursor-pointer md:h-auto">
-                <h2 class="text-xl">Option 3</h2>
-            </div>
+    
+    <div class="absolute inset-x-0 bottom-0 z-[1000] flex justify-center p-2"> 
+        <div class="w-full md:w-2/4 flex flex-col md:flex-row justify-between space-y-2 md:space-y-0 md:space-x-2">
+            {% for driver in closest_drivers %}
+                <div class="bg-white text-black p-2 rounded-lg flex-1 flex items-center justify-center cursor-pointer md:h-auto flex-col">
+                    <h1 class="text-sm font-medium">{{ driver.status }}</h1>
+                    <h2 class="text-sm">{{ driver.user.username }}</h2> 
+                    <div class="p-4 pt-0 duration-300 hover:scale-105 hover:shadow-xl">
+                        <form action="{% url 'create_ride_request' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="driver_id" value="{{ driver.id }}">
+                            <button type="submit"
+                                class="call-button flex select-none items-center gap-1 rounded-lg py-1 px-2 text-center align-middle font-sans text-xs font-bold uppercase text-orange-500 transition-all hover:bg-orange-500/10 active:bg-orange-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            >
+                                Call
+                                <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                                class="h-3 w-3"
+                                >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                                ></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
     </div>
     <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const menuModal = document.getElementById('menu-modal');
-        const closeModal = document.getElementById('close-modal');
-        const callTaxiBtn = document.getElementById('call-taxi');
-        const profileModal = document.getElementById('profile-modal');
-        const editProfileBtn = document.getElementById('edit-profile-btn');
-        const closeProfileModal = document.getElementById('close-profile-modal');
+        // DOM Elements
+        const elements = {
+            menuBtn: document.getElementById('menu-btn'),
+            menuModal: document.getElementById('menu-modal'),
+            closeModal: document.getElementById('close-modal'),
+            callTaxiBtn: document.getElementById('call-taxi'),
+            profileModal: document.getElementById('profile-modal'),
+            editProfileBtn: document.getElementById('edit-profile-btn'),
+            closeProfileModal: document.getElementById('close-profile-modal'),
+            currentLocationInput: document.getElementById("current-location"),
+            destinationInput: document.getElementById("destination")
+        };
 
-        // เปิด modal เมื่อคลิกปุ่มแก้ไขข้อมูลส่วนตัว
-        editProfileBtn.addEventListener('click', function() {
-            profileModal.classList.remove('hidden');
-        });
+        // Map configuration
+        const mapConfig = {
+            initialView: [13.7563, 100.5018],
+            initialZoom: 13,
+            tileLayerUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        };
 
-        // ปิด modal เมื่อคลิกปุ่มปิด
-        closeProfileModal.addEventListener('click', function() {
-            profileModal.classList.add('hidden');
-        });
+        // Map variables
+        let map, marker, destinationMarker, routeControl;
+        const taxiMarkers = [];
 
-        menuBtn.addEventListener('click', function() {
-            menuModal.classList.remove('hidden');
-        });
-        closeModal.addEventListener('click', function() {
-            menuModal.classList.add('hidden');
-        });
+        // Initialize map
+        function initializeMap() {
+            map = L.map('map').setView(mapConfig.initialView, mapConfig.initialZoom);
+            L.tileLayer(mapConfig.tileLayerUrl, {}).addTo(map);
+        }
 
-        window.addEventListener('click', function(event) {
-            if (event.target === profileModal) {
-                profileModal.classList.add('hidden');
-            }
-            if (event.target === menuModal) {
-                menuModal.classList.add('hidden');
-            }
-        });
+        // UI Event Listeners
+        function setupEventListeners() {
+            elements.editProfileBtn.addEventListener('click', () => toggleModal(elements.profileModal, false));
+            elements.closeProfileModal.addEventListener('click', () => toggleModal(elements.profileModal, true));
+            elements.menuBtn.addEventListener('click', () => toggleModal(elements.menuModal, false));
+            elements.closeModal.addEventListener('click', () => toggleModal(elements.menuModal, true));
 
-        var map = L.map('map').setView([13.7563, 100.5018], 13); // Default center location
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+            window.addEventListener('click', (event) => {
+                if (event.target === elements.profileModal) toggleModal(elements.profileModal, true);
+                if (event.target === elements.menuModal) toggleModal(elements.menuModal, true);
+            });
 
-        var marker; // Marker for current location
-        var destinationMarker; // Marker for destination
-        var routeControl; // Route control (optional if using Leaflet Routing Machine)
-        var taxiMarkers = []; // Array to store taxi markers
+            map.on('click', handleMapClick);
+        }
 
-        // Geolocation function to get user's current position
+        // Toggle modal visibility
+        function toggleModal(modal, hide) {
+            modal.classList.toggle('hidden', hide);
+        }
+
+        // Handle map click for destination selection
+        function handleMapClick(ev) {
+            if (destinationMarker) map.removeLayer(destinationMarker);
+            
+            destinationMarker = L.marker(ev.latlng).addTo(map)
+                .bindPopup('จุดหมาย')
+                .openPopup();
+
+            elements.destinationInput.value = `${ev.latlng.lat},${ev.latlng.lng}`;
+        }
+
+        // Set view to current location
         function setViewToCurrentLocation() {
             if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var lat = position.coords.latitude;
-                    var lon = position.coords.longitude;
-                    document.getElementById("current-location").value = [lat, lon];
-
-                    map.setView([lat, lon], 15);
-
-                    // Remove previous marker if it exists
-                    if (marker) {
-                        map.removeLayer(marker);  
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude: lat, longitude: lon } = position.coords;
+                        elements.currentLocationInput.value = `${lat},${lon}`;
+                        map.setView([lat, lon], 15);
+                        
+                        if (marker) map.removeLayer(marker);
+                        
+                        marker = L.marker([lat, lon]).addTo(map)
+                            .bindPopup('ที่อยู่คุณปัจจุบัน')
+                            .openPopup();
+                    },
+                    (error) => {
+                        console.error("Error getting location:", error.message);
+                        alert("Unable to retrieve your location. Please enter it manually.");
                     }
-
-                    marker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup('ที่อยู่คุณปัจจุบัน')
-                        .openPopup();
-
-                }, function(error) {
-                    console.error("Error getting location:", error.message);
-                    alert("Unable to retrieve your location. Please enter it manually.");
-                });
+                );
             } else {
                 console.error("Geolocation is not supported by this browser.");
                 alert("Geolocation is not supported by your browser. Please enter your location manually.");
             }
         }
 
-        // Event listener for destination selection
-        map.on('click', function(ev) {
-            if (destinationMarker) {
-                map.removeLayer(destinationMarker);
-            }
-            destinationMarker = L.marker([ev.latlng.lat, ev.latlng.lng]).addTo(map)
-                .bindPopup('จุดหมาย')
-                .openPopup();
+        // Add taxi markers to the map
+        function addTaxiMarkers() {
+            const myIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/128/1946/1946780.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32],
+            });
 
-            document.getElementById("destination").value = [ev.latlng.lat, ev.latlng.lng];
-        });
+            // Use Django template tags to iterate over drivers
+            {% for driver in drivers %}
+                {% if driver.current_location %}
+                    var taxiMarker = L.marker([{{ driver.current_location.latitude }}, {{ driver.current_location.longitude }}], {icon: myIcon}).addTo(map);
+                    taxiMarker.bindPopup('<strong>{{ driver.user.username }}</strong><br>License: {{ driver.license_number }}<br>Car: {{ driver.car_model }}<br>Status: {{ driver.status }}');
+                    taxiMarkers.push(taxiMarker);
+                {% endif %}
+            {% endfor %}
+        }
 
-        // Call Taxi functionality
-        callTaxiBtn.addEventListener('click', function() {
-            var currentLocation = document.getElementById("current-location").value.split(',');
-            var destination = document.getElementById("destination").value.split(',');
+        // Initialize the application
+        function init() {
+            initializeMap();
+            setupEventListeners();
+            setViewToCurrentLocation();
+            addTaxiMarkers()
+        }
 
-            if (currentLocation.length === 2 && destination.length === 2) {
-                // Remove previous route if it exists
-                if (routeControl) {
-                    map.removeControl(routeControl);  
-                }
+        // Call the init function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener("DOMContentLoaded", function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
 
-                // Draw the route between current location and destination (assuming Leaflet Routing Machine)
-                routeControl = L.Routing.control({
-                    waypoints: [
-                        L.latLng(currentLocation[0], currentLocation[1]),
-                        L.latLng(destination[0], destination[1])
-                    ],
-                    routeWhileDragging: true
-                }).addTo(map);
-
+                    // Send the location to the server
+                    fetch("{% url 'save_location' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is sent
+                        },
+                        body: `latitude=${latitude}&longitude=${longitude}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Location saved:", data.location);
+                        } else {
+                            console.error("Error saving location:", data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch error:", error);
+                    });
+                }, function(error) {
+                    console.error("Geolocation error:", error);
+                });
             } else {
-                alert("Please ensure both current location and destination are set.");
+                console.error("Geolocation is not supported by this browser.");
             }
         });
-
-        // Set initial location to user's current location
-        setViewToCurrentLocation();
-
-        // Icon for taxi markers
-        var myIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/128/1946/1946780.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32],
-        });
-
-        // Loop through drivers and add them to the map
-        {% for driver in drivers %}
-            {% if driver.current_location %}
-                var taxiMarker = L.marker([{{ driver.current_location.latitude }}, {{ driver.current_location.longitude }}], {icon: myIcon}).addTo(map);
-                taxiMarker.bindPopup('<strong>{{ driver.user.username }}</strong><br>License: {{ driver.license_number }}<br>Car: {{ driver.car_model }}<br>Status: {{ driver.status }}');
-                taxiMarkers.push(taxiMarker); // Add taxi marker to array for further use
-            {% endif %}
-        {% endfor %}
     </script>
 </body>
-
 </html>

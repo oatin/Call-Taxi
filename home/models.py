@@ -24,7 +24,7 @@ class TaxiDriver(models.Model):
         ('busy', 'Busy'),
         ('offline', 'Offline'),
     ])
-    current_location = models.OneToOneField(Location, on_delete=models.SET_NULL, null=True, blank=True)  # เพิ่มฟิลด์นี้เพื่อเก็บตำแหน่งปัจจุบัน
+    current_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"TaxiDriver({self.user.username}, License: {self.license_number})"
@@ -33,11 +33,12 @@ class Ride(models.Model):
     RIDE_STATUS_CHOICES = [
         ('requested', 'Requested'),
         ('accepted', 'Accepted'),
+        ('driver_arrived', 'Driver Arrived'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
-    passenger = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='rides_as_passenger')
+    passenger = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rides_as_passenger')
     driver = models.ForeignKey(TaxiDriver, on_delete=models.SET_NULL, null=True, related_name='rides_as_driver')
     start_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, related_name='rides_from')
     end_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, related_name='rides_to')
