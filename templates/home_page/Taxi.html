@@ -95,29 +95,57 @@
     
     <div id="map" class="flex-1"></div>
 
-    <div id="work-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100]">
-        <div class="bg-white p-8 rounded-lg w-11/12 max-w-md">
-            <h2 class="text-2xl font-semibold mb-4">งาน</h2>
-            
-            <form id="work-form" method="POST" action="{% url 'job_request' %}">
-                {% csrf_token %}
-                {% for job in job_requests %}
-                <div class="flex flex-col items-center pb-10" 
-                data-start-lat="{{ job.start_location.latitude }}" 
-                data-start-lon="{{ job.start_location.longitude }}"
-                data-driver-id="{{ job.driver.id }}">
-                    <h1 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ job.passenger.username }}</h1>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ job.start_location }}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ job.status }}</p>
-                    <div class="flex mt-4 md:mt-6">
-                        <button type="submit" name="action" value="decline_{{ job.id }}" class="py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-orange-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">ไม่รับงาน</button>
-                        <button id="accept_" type="submit" name="action" value="accept_{{ job.id }}" class="py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-orange-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">รับงาน</button>
+    <div id="work-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100] p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md md:max-w-lg overflow-hidden">
+            <div class="bg-orange-500 p-4 sm:p-6">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">งาน (Jobs)</h2>
+            </div>
+            <div class="p-4 sm:p-6 md:p-8">
+                <form id="work-form" method="POST" action="{% url 'job_request' %}">
+                    {% csrf_token %}
+                    {% for job in job_requests %}
+                    <div class="mb-8 last:mb-0 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md" 
+                        data-start-lat="{{ job.start_location.latitude }}" 
+                        data-start-lon="{{ job.start_location.longitude }}"
+                        data-driver-id="{{ job.driver.id }}">
+                        <div class="text-center mb-4">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ job.passenger.username }}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Passenger</p>
+                        </div>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span class="font-medium">จุดเริ่มต้น :</span> {{ job.start_location }}
+                            </p>
+                            <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span class="font-medium">สถานะ :</span> 
+                                <span class="px-2 py-1 rounded-full text-xs font-medium
+                                {% if job.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                                {% elif job.status == 'In Progress' %}bg-blue-100 text-blue-800
+                                {% elif job.status == 'Completed' %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ job.status }}
+                                </span>
+                            </p>
+                            <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span class="font-medium">เบอร์โทร :</span> {{ job.passenger.phone_number }}
+                            </p>
+                        </div>
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" name="action" value="decline_{{ job.id }}" class="py-2 px-4 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors duration-300">
+                                ไม่รับงาน
+                            </button>
+                            <button id="accept_{{ job.id }}" type="submit" name="action" value="accept_{{ job.id }}" class="py-2 px-4 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors duration-300">
+                                รับงาน
+                            </button>
+                        </div>
                     </div>
-                </div>
-                {% endfor %}
-            </form>
-            
-            <button id="close-modal-work" class="mt-6 block w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">Close</button>
+                    {% endfor %}
+                </form>
+                
+                <button id="close-modal-work" class="mt-6 block w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors duration-300">
+                    Close
+                </button>
+            </div>
         </div>
     </div>
 

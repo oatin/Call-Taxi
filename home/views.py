@@ -24,8 +24,14 @@ def create_ride_request(request):
 
     try:
         driver = TaxiDriver.objects.get(id=driver_id)
+
         start_location = Location.objects.get(user=request.user)
-        
+
+        existing_ride = Ride.objects.filter(passenger=request.user, status__in=['requested', 'accepted', 'driver_arrived', 'in_progress'])
+
+        if existing_ride.exists():
+            existing_ride.delete()
+
         Ride.objects.create(
             passenger=request.user,
             driver=driver,
@@ -34,8 +40,11 @@ def create_ride_request(request):
         )
 
         messages.success(request, 'Ride request sent successfully!')
+
     except TaxiDriver.DoesNotExist:
         messages.error(request, 'Driver not found')
+    except Location.DoesNotExist:
+        messages.error(request, 'Start location not found')
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
 
@@ -75,6 +84,7 @@ def home(request):
             if Location.objects.filter(user=request.user).exists():
                 driver_distances = []
                 user_location = Location.objects.get(user=request.user)
+                job_requests = Ride.objects.filter(passenger=request.user).order_by('-request_time')
                 user_lat = user_location.latitude
                 user_lon = user_location.longitude
                 
@@ -89,6 +99,7 @@ def home(request):
                 context = {
                     'drivers': drivers,
                     'closest_drivers': [driver for driver, _ in closest_drivers],
+                    'job_requests': job_requests,
                 }
                 return render(request, 'home_page/index.html', context)
             else:

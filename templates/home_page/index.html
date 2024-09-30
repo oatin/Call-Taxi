@@ -94,6 +94,65 @@
         </div>
     </div>
     
+    {% if job_requests %}
+        <div id="status-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100] p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md md:max-w-lg overflow-hidden">
+                <div class="bg-orange-600 p-4 sm:p-6">
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-white">Status</h1>
+                </div>
+                <form id="work-form" method="POST" action="{% url 'job_request' %}" class="p-4 sm:p-6 md:p-8">
+                    {% csrf_token %}
+                    {% with job_requests.last as job %}
+                    <div class="flex flex-col space-y-4" 
+                        data-start-lat="{{ job.start_location.latitude }}" 
+                        data-start-lon="{{ job.start_location.longitude }}"
+                        data-driver-id="{{ job.driver.id }}">
+                        <div class="text-center">
+                            <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">{{ job.passenger.username }}</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Passenger</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                            <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span class="font-medium">Start Location:</span> {{ job.start_location }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                            <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span class="font-medium">Status:</span> 
+                                <span class="px-2 py-1 rounded-full text-xs font-medium
+                                {% if job.status == 'requested' %}bg-yellow-100 text-yellow-800
+                                {% elif job.status == 'accepted' %}bg-blue-100 text-blue-800
+                                {% elif job.status == 'In Progress' %}bg-blue-100 text-blue-800
+                                {% elif job.status == 'Completed' %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ job.status }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                            <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                                <span class="font-medium">Driver Phone:</span> {{ job.driver.user.phone_number }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300">
+                            Update Status
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div id="status-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[1100]">
+            <div class="bg-white p-8 rounded-lg w-11/12 max-w-md">
+                <p class="text-sm text-gray-500 dark:text-gray-400">คุณยังไม่ได้เรียก Taxi</p>
+            </div>
+        </div>
+    {% endif %}
+    
+
     <div id="map" class="flex-1"></div>
     
     <div class="absolute inset-x-0 bottom-0 z-[1000] flex justify-center p-2"> 
@@ -141,6 +200,7 @@
             closeModal: document.getElementById('close-modal'),
             callTaxiBtn: document.getElementById('call-taxi'),
             profileModal: document.getElementById('profile-modal'),
+            statusModal: document.getElementById('status-modal'),
             editProfileBtn: document.getElementById('edit-profile-btn'),
             closeProfileModal: document.getElementById('close-profile-modal'),
             currentLocationInput: document.getElementById("current-location"),
@@ -170,10 +230,12 @@
             elements.closeProfileModal.addEventListener('click', () => toggleModal(elements.profileModal, true));
             elements.menuBtn.addEventListener('click', () => toggleModal(elements.menuModal, false));
             elements.closeModal.addEventListener('click', () => toggleModal(elements.menuModal, true));
+            elements.callTaxiBtn.addEventListener('click', () => toggleModal(elements.statusModal, false));
 
             window.addEventListener('click', (event) => {
                 if (event.target === elements.profileModal) toggleModal(elements.profileModal, true);
                 if (event.target === elements.menuModal) toggleModal(elements.menuModal, true);
+                if (event.target === elements.statusModal) toggleModal(elements.statusModal, true);
             });
 
             map.on('click', handleMapClick);

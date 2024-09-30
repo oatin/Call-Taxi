@@ -19,7 +19,7 @@
             <h2 class="text-3xl font-semibold text-center mb-6">เข้าสู่ระบบ</h2>
             
             {% if error %}
-                <div class="mb-4 text-red-500 text-center">{{ error }}</div>  <!-- Display error message -->
+                <div class="mb-4 text-red-500 text-center">{{ error }} <a href="/signup/" class="font-semibold hover:underline">ลืมรหัสผ่าน?</a></div> 
             {% endif %}
             
             <form method="POST" action="{% url 'login' %}" class="space-y-4">
