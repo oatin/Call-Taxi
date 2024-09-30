@@ -51,6 +51,7 @@ Call-Taxi/
 ├── static/              # Static files (CSS, JS)
 ├── templates/           # HTML templates for the app
 ├── chat/                # Real-time chat functionality between users and drivers
+├── home/                # Home is main function project
 ├── login/               # User authentication and Google OAuth login
 ├── manage.py            # Django management script
 ├── requirements.txt     # Python dependencies
