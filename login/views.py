@@ -1,7 +1,17 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from .forms import CustomSignupForm
+
+from django.contrib.auth.views import PasswordResetView, PasswordResetCompleteView
+from django.urls import reverse_lazy
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    def get(self, request, *args, **kwargs):
+        return redirect('login')  
+    
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = 'registration/password_reset.html'
+    success_url = reverse_lazy('password_reset_done')
 
 def home_redirect_view(request, url=''):
     if request.user.is_authenticated:

@@ -14,8 +14,8 @@ This is a project that will be used for submitting assignment 1145005-63 Web Dev
 - [x] Database Design
 - [x] Frontend Development
 - [x] Backend Development
-- [ ] Integration
-- [ ] Testing
+- [x] Integration
+- [x] Testing
 - [ ] Deployment & Hosting
 - [ ] Optimization & Maintenance
 

@@ -10,16 +10,17 @@ class CustomSignupForm(UserCreationForm):
     role = forms.ChoiceField(
         choices=CustomUser.ROLE_CHOICES, 
         required=True, 
-        widget=forms.Select(attrs={"class": class_name_input})  # Use Select widget for dropdown
+        widget=forms.Select(attrs={"class": class_name_input}) 
     )
 
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={"class": class_name_input}))
     license_number = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={"class": class_name_input}))
     car_model = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={"class": class_name_input}))
     car_plate = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": class_name_input}))
 
     class Meta:
         model = CustomUser
-        fields = ['role', 'username', 'password1', 'password2' , 'phone_number']
+        fields = ['role', 'username', 'password1', 'password2' ,'email', 'phone_number']
 
     def save(self, commit=True):
         user = super(CustomSignupForm, self).save(commit=False)
@@ -29,7 +30,6 @@ class CustomSignupForm(UserCreationForm):
         if commit:
             user.save()
 
-        # สร้างข้อมูล TaxiDriver หากเลือก role เป็นคนขับ
         if user.role == 'driver':
             TaxiDriver.objects.create(
                 user=user,
