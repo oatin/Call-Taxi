@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% block title %}Admin-Dashboard{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Content header -->
+    <div class="flex items-center justify-between px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
+      <h1 class="text-2xl font-semibold">Dashboard</h1>
+    </div>
+
+    <!-- Content -->
+    <div class="mt-2">
+      <!-- State cards -->
+      <div class="grid grid-cols-1 gap-8 p-4 lg:grid-cols-2 xl:grid-cols-4">
+        <!-- Value card -->
+        <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
+          <div>
+            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+              Value
+            </h6>
+            <span class="text-xl font-semibold">${{ total_value|floatformat:2 }}</span>
+          </div>
+          <div>
+          </div>
+        </div>
+
+        <!-- Users card -->
+        <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
+          <div>
+            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+              Users
+            </h6>
+            <span class="text-xl font-semibold">{{ total_users }}</span>
+          </div>
+          <div>
+            
+          </div>
+        </div>
+
+        <!-- Orders card -->
+        <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
+          <div>
+            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+              Jobs
+            </h6>
+            <span class="text-xl font-semibold">{{ total_Jobs }}</span>
+          </div>
+          <div>
+            
+          </div>
+        </div>
+
+        <!-- Tickets card -->
+        <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
+          <div>
+            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+              Tickets
+            </h6>
+            <span class="text-xl font-semibold">{{ total_tickets }}</span>
+          </div>
+          <div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 p-4 space-y-8 lg:gap-8 lg:space-y-0 lg:grid-cols-3">
+        <!-- Bar chart card -->
+        <div class="col-span-2 bg-white rounded-md dark:bg-darker" x-data="{ isOn: false }">
+          <!-- Card header -->
+          <div class="flex items-center justify-between p-4 border-b dark:border-primary">
+            <h4 class="text-lg font-semibold text-gray-500 dark:text-light">Bar Chart</h4>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-500 dark:text-light">Last year</span>
+              <button
+                class="relative focus:outline-none"
+                x-cloak
+                @click="isOn = !isOn; updateBarChart(isOn)"
+              >
+                <!-- Toggle button here -->
+              </button>
+            </div>
+          </div>
+          <!-- Chart -->
+          <div class="relative p-4 h-72">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Doughnut chart card -->
+        <div class="bg-white rounded-md dark:bg-darker" x-data="{ isOn: false }">
+          <!-- Card header -->
+          <div class="flex items-center justify-between p-4 border-b dark:border-primary">
+            <h4 class="text-lg font-semibold text-gray-500 dark:text-light">Doughnut Chart</h4>
+            <div class="flex items-center">
+              <button
+                class="relative focus:outline-none"
+                x-cloak
+                @click="isOn = !isOn; updateDoughnutChart(isOn)"
+              >
+                <!-- Toggle button here -->
+              </button>
+            </div>
+          </div>
+          <!-- Chart -->
+          <div class="relative p-4 h-72">
+            <canvas id="doughnutChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two grid columns -->
+      <div class="grid grid-cols-1 p-4 space-y-8 lg:gap-8 lg:space-y-0 lg:grid-cols-3">
+        <!-- Active users chart -->
+        <div class="col-span-1 bg-white rounded-md dark:bg-darker">
+          <!-- Card header -->
+          <div class="p-4 border-b dark:border-primary">
+            <h4 class="text-lg font-semibold text-gray-500 dark:text-light">Active users right now</h4>
+          </div>
+          <p class="p-4">
+            <span class="text-2xl font-medium text-gray-500 dark:text-light" id="usersCount">{{ active_users }}</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-primary">Users</span>
+          </p>
+          <!-- Chart -->
+          <div class="relative p-4 h-72">
+            <canvas id="activeUsersChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Line chart card -->
+        <div class="col-span-2 bg-white rounded-md dark:bg-darker" x-data="{ isOn: false }">
+          <!-- Card header -->
+          <div class="flex items-center justify-between p-4 border-b dark:border-primary">
+            <h4 class="text-lg font-semibold text-gray-500 dark:text-light">Line Chart</h4>
+            <div class="flex items-center">
+              <button
+                class="relative focus:outline-none"
+                x-cloak
+                @click="isOn = !isOn; updateLineChart()"
+              >
+                <!-- Toggle button here -->
+              </button>
+            </div>
+          </div>
+          <!-- Chart -->
+          <div class="relative p-4 h-72">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const monthlyData = {{ monthly_data|safe }};
+    const userTypes = {{ user_types|safe }};
+    const lineChartData = {{ line_chart_data|safe }};
+    const activeUsers = {{ active_users|safe }};
+
+    // Initialize bar chart for monthly ride data
+    const barChart = new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: monthlyData.map(d => d.month), // X-axis (months)
+            datasets: [{
+                label: 'Monthly Rides',
+                data: monthlyData.map(d => d.count), // Y-axis (counts)
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Initialize doughnut chart for user roles (Passengers vs Drivers)
+    const doughnutChart = new Chart(document.getElementById('doughnutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: userTypes.map(ut => ut.role), // X-axis labels (role names)
+            datasets: [{
+                data: userTypes.map(ut => ut.count), // Y-axis (user counts)
+                backgroundColor: ['rgba(0, 199, 235, 0.6)', 'rgba(54, 162, 235, 0.6)'],
+                borderColor: ['rgba(0, 199, 235, 1)', 'rgba(54, 162, 235, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Initialize line chart for daily ride data
+    const lineChart = new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: lineChartData.map(d => d.date), // X-axis (dates)
+            datasets: [{
+                label: 'Daily Rides',
+                data: lineChartData.map(d => d.count), // Y-axis (counts)
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Active Users Chart
+    const activeUsersChart = new Chart(document.getElementById('activeUsersChart'), {
+    type: 'doughnut', // A doughnut chart to show a percentage of active users
+    data: {
+        labels: ['Active Users', 'Inactive Users'],
+        datasets: [{
+        label: 'User Activity',
+        data: [activeUsers, {{ total_users }} - activeUsers], // Show active vs inactive users
+        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(201, 203, 207, 0.6)'],
+        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(201, 203, 207, 1)'],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+        legend: {
+            position: 'top'
+        }
+        }
+    }
+    });
+
+    // Optional: Define update functions for charts if needed
+    function updateBarChart(newData) {
+        barChart.data.datasets[0].data = newData;
+        barChart.update();
+    }
+
+    function updateDoughnutChart(newData) {
+        doughnutChart.data.datasets[0].data = newData;
+        doughnutChart.update();
+    }
+
+    function updateLineChart(newData) {
+        lineChart.data.datasets[0].data = newData;
+        lineChart.update();
+    }
+  </script>
+{% endblock %}

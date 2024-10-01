@@ -5,13 +5,11 @@ from .models import Location, TaxiDriver, Ride
 from django.contrib.auth import update_session_auth_hash
 
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
 from math import radians, sin, cos, sqrt, atan2
 import json
 
 def haversine(lon1, lat1, lon2, lat2):
-    R = 6371  # Radius of the Earth in kilometers
+    R = 6371 
     dlon = radians(lon2 - lon1)
     dlat = radians(lat2 - lat1)
     

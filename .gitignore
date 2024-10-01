@@ -22,4 +22,4 @@ rad.json
 TestResults.xml
 
 .env
-node_modules
+node_modules/
