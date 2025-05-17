@@ -58,9 +58,6 @@ Call-Taxi/
 └── README.md            # Project documentation
 ```
 
-## Database Class Diagram
-![databaseclassdiagram](databaseclassdiagram.png)
-
 ## Contributors
 <a href="https://github.com/oatin/Call-Taxi/graphs/contributors" target="_blank">
   <img src="https://contrib.rocks/image?repo=oatin/Call-Taxi" />
